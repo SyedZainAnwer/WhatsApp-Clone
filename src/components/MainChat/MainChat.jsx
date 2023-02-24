@@ -6,15 +6,27 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
 import MicOutlinedIcon from '@mui/icons-material/MicOutlined';
 import './MainChat.css'
+import { useParams } from 'react-router';
+import db from '../../config';
 
 const MainChat = () => {
 
     const [input, setInput] = useState('')
-    const [seed, setSeed] = useState('')
+    const [ seed, setSeed ] = useState('')
+    const { roomId } = useParams();
+    const [ roomName, setRoomName ] = useState('');
 
     useEffect(() => {
         setSeed(Math.floor(Math.random() * 5000))
-    }, [])
+    }, [roomId]);
+
+    useEffect(() => {
+      if (roomId) {
+        db.collection('rooms').doc(roomId).onSnapshot(snapshot => (
+          setRoomName(snapshot.data().name)
+        ))
+      }
+    }, [roomId])
 
     const sendMessage = (e) => {
         e.preventDefault();
@@ -29,7 +41,7 @@ const MainChat = () => {
         <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
 
         <div className="chat-header-info">
-            <h3>Room Name</h3>
+            <h3>{roomName}</h3>
             <p>Last Seen..</p>
         </div>
 

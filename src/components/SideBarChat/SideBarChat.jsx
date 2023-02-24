@@ -1,24 +1,29 @@
 import { Avatar } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import db from '../../config'
 import './SideBarChat.css'
 
 const SideBarChat = ({ addNewChat, id, name }) => {
 
     const [seed, setSeed] = useState('')
 
-    useEffect(() => {
+    const unsubscribe = useEffect(() => {
         setSeed(Math.floor(Math.random() * 5000))
-    }, [])
+    }, []);
 
     const createChat = () => {
       const roomName = prompt("Please name for chat");
 
       if (roomName) {
-        
+        db.collection("rooms").add({
+          name : roomName,
+        })
       }
     }
 
   return !addNewChat ? (
+    <Link to={`/rooms/${id}`}>
     <div className='sidebar-chat-main'>
       <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
       <div className="sidebar-chat-info">
@@ -26,6 +31,7 @@ const SideBarChat = ({ addNewChat, id, name }) => {
         <p>Message...</p>
       </div>
     </div>
+    </Link>
   ) : (
     <div onClick={createChat} className='sidebar-chat-main'>
         <h2>
