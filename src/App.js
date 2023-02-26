@@ -9,6 +9,8 @@ import "./App.css";
 import React, { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
+import Login from "./components/Login/Login";
+import { useStateValue } from "./SateProvider";
 
 const router = createBrowserRouter([
   {
@@ -36,9 +38,10 @@ const router = createBrowserRouter([
 
 function App() {
 
-  const [ user, setUser ] = useState(null)
+  // const [ user, setUser ] = useState(null)
+  const [ { user }, dispatch ] = useStateValue();
 
-  return user ? <RouterProvider router={router} /> : <h1>Login</h1>
+  return user ? <RouterProvider router={router} /> : <Login />
 }
 
 export default App;
