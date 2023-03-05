@@ -4,10 +4,10 @@ import ChatOutlinedIcon from "@mui/icons-material/ChatOutlined";
 import DonutLargeOutlinedIcon from "@mui/icons-material/DonutLargeOutlined";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import "./SideBar.css";
 import SideBarChat from "../SideBarChat/SideBarChat";
 import db from "../../config";
 import { useStateValue } from "../../SateProvider";
+import "./SideBar.css";
 
 const SideBar = () => {
 

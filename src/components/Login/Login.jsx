@@ -3,6 +3,7 @@ import React from "react";
 import { auth, provider } from "../../config";
 import { actionTypes } from "../../Reducer";
 import { useStateValue } from "../../SateProvider";
+import Logo from '../../assests/images/whatsappImage.png'
 import "./Login.css";
 
 const Login = () => {
@@ -24,7 +25,7 @@ const Login = () => {
   return (
     <div className="login-main">
       <div className="login-container">
-        <img src="https://upload.wikipedia.org/wikipedia:" alt="" />
+        <img src={Logo} alt="" />
         <div className="login-text">
           <h1>Sign In to WhatsApp</h1>
         </div>

@@ -1,16 +1,11 @@
-import { Switch } from "@mui/material";
-import { BrowserRouter, Router, Route } from "react-router-dom";
-// import { Switch,Route,Link } from 'react-router-dom';
-// import { Switch} from "react-router";
 import MainChat from "./components/MainChat/MainChat";
 import SideBar from "./components/SideBar/SideBar";
-import "./App.css";
-
 import React, { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Login from "./components/Login/Login";
 import { useStateValue } from "./SateProvider";
+import "./App.css";
 
 const router = createBrowserRouter([
   {

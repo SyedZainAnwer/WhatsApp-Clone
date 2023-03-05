@@ -1,83 +1,116 @@
-import { Avatar, IconButton } from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined';
+import { Avatar, IconButton } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
-import MicOutlinedIcon from '@mui/icons-material/MicOutlined';
-import './MainChat.css'
-import { useParams } from 'react-router';
-import db from '../../config';
+import EmojiEmotionsOutlinedIcon from "@mui/icons-material/EmojiEmotionsOutlined";
+import MicOutlinedIcon from "@mui/icons-material/MicOutlined";
+import { useParams } from "react-router";
+import db from "../../config";
+import { useStateValue } from "../../SateProvider";
+import "firebase/compat/firestore";
+import firebase from "firebase/compat/app";
+import "./MainChat.css";
 
 const MainChat = () => {
+  const [input, setInput] = useState("");
+  const [seed, setSeed] = useState("");
+  const { roomId } = useParams();
+  const [roomName, setRoomName] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [{ user }, dispatch] = useStateValue();
 
-    const [input, setInput] = useState('')
-    const [ seed, setSeed ] = useState('')
-    const { roomId } = useParams();
-    const [ roomName, setRoomName ] = useState('');
+  useEffect(() => {
+    setSeed(Math.floor(Math.random() * 5000));
+  }, [roomId]);
 
-    useEffect(() => {
-        setSeed(Math.floor(Math.random() * 5000))
-    }, [roomId]);
+  useEffect(() => {
+    if (roomId) {
+      db.collection("rooms")
+        .doc(roomId)
+        .onSnapshot((snapshot) => setRoomName(snapshot.data().name));
 
-    useEffect(() => {
-      if (roomId) {
-        db.collection('rooms').doc(roomId).onSnapshot(snapshot => (
-          setRoomName(snapshot.data().name)
-        ))
-      }
-    }, [roomId])
-
-    const sendMessage = (e) => {
-        e.preventDefault();
-        console.log(input)
-        setInput("")
+      db.collection("rooms")
+        .doc(roomId)
+        .collection("messages")
+        .orderBy("timestamp", "asc")
+        .onSnapshot((snapshot) =>
+          setMessages(snapshot.docs.map((doc) => doc.data()))
+        );
     }
+  }, [roomId]);
 
+  const sendMessage = (e) => {
+    e.preventDefault();
+    db.collection("rooms").doc(roomId).collection("messages").add({
+      message: input,
+      name: user.displayName,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setInput("");
+  };
 
   return (
-    <div className='chat-main-menu'>
+    <div className="chat-main-menu">
       <div className="chat-header">
-        <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
+        <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
 
         <div className="chat-header-info">
-            <h3>{roomName}</h3>
-            <p>Last Seen..</p>
+          <h3>{roomName}</h3>
+          <p>
+            last seen{" "}
+            {new Date(
+              messages[messages.length - 1]?.timestamp?.toDate()
+            ).toUTCString()}
+          </p>
         </div>
 
         <div className="chat-header-right">
-            <IconButton>
-                <SearchOutlinedIcon/>
-            </IconButton>
-            <IconButton>
-                <AttachFileOutlinedIcon/>
-            </IconButton>
-            <IconButton>
-                <MoreVertOutlinedIcon/>
-            </IconButton>
+          <IconButton>
+            <SearchOutlinedIcon />
+          </IconButton>
+          <IconButton>
+            <AttachFileOutlinedIcon />
+          </IconButton>
+          <IconButton>
+            <MoreVertOutlinedIcon />
+          </IconButton>
         </div>
       </div>
 
       <div className="chat-body">
-        <p className={`chat-message ${true && "chat-receiver"}`}>
-            <span className="chat-name">Zain</span>
-            Hey!!
+        {messages.map((message) => (
+          <p
+            className={`chat-message ${
+              message.name === user.displayName && "chat-receiver"
+            }`}
+          >
+            <span className="chat-name">{message.name}</span>
+            {message.message}
             <span className="chat-time-span">
-                3:52pm
+              {new Date(message.timestamp?.toDate()).toUTCString()}
             </span>
-        </p>
+          </p>
+        ))}
       </div>
 
       <div className="chat-footer">
-        <EmojiEmotionsOutlinedIcon/>
+        <EmojiEmotionsOutlinedIcon />
         <form>
-            <input value={input} onChange={e => setInput(e.target.value)} type="text" placeholder='Type a message'/>
-            <button type='submit' onClick={sendMessage}>Send a message</button>
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            type="text"
+            placeholder="Type a message"
+          />
+          <button type="submit" onClick={sendMessage}>
+            Send a message
+          </button>
         </form>
-        <MicOutlinedIcon/>
+        <MicOutlinedIcon />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MainChat
+export default MainChat;
