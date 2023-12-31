@@ -1,6 +1,5 @@
 import MainChat from "./components/MainChat/MainChat";
 import SideBar from "./components/SideBar/SideBar";
-import React, { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Login from "./components/Login/Login";
@@ -33,7 +32,6 @@ const router = createBrowserRouter([
 
 function App() {
 
-  // const [ user, setUser ] = useState(null)
   const [ { user }, dispatch ] = useStateValue();
 
   return user ? <RouterProvider router={router} /> : <Login />

@@ -40,15 +40,23 @@ const MainChat = () => {
     }
   }, [roomId]);
 
-  const sendMessage = (e) => {
+  const sendMessage = async (e) => {
     e.preventDefault();
-    db.collection("rooms").doc(roomId).collection("messages").add({
-      message: input,
-      name: user.displayName,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-    setInput("");
+  
+    try {
+      await db.collection("rooms").doc(roomId).collection("messages").add({
+        message: input,
+        name: user.displayName,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+  
+      setInput("");
+    } catch (error) {
+      console.error("Error sending message: ", error.message);
+    }
   };
+  
+  console.log(messages)
 
   return (
     <div className="chat-main-menu">
@@ -79,8 +87,9 @@ const MainChat = () => {
       </div>
 
       <div className="chat-body">
-        {messages.map((message) => (
+        {messages.map((message, i) => (
           <p
+            key={i}
             className={`chat-message ${
               message.name === user.displayName && "chat-receiver"
             }`}

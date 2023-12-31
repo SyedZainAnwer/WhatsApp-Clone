@@ -7,6 +7,7 @@ import "./SideBarChat.css";
 const SideBarChat = ({ addNewChat, id, name }) => {
   const [seed, setSeed] = useState("");
   const [messages, setMessages] = useState("");
+  console.log(messages, "messages")
 
   useEffect(() => {
     if (id) {
